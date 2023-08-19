@@ -1,0 +1,28 @@
+BaseEntity
+Created
+Modified
+PartitionKey
+RowKey
+
+- User -
+UserId
+Name
+
+
+- Todo -
+TodoId
+UserId
+Title
+Description
+DueDate?
+CompletedDate?
+
+
+Create/Update/Delete Todo
+Create/Update/Delete User
+Associate Todo with User
+Todo can be sorted or filtered by users
+Completed Todos can be hidden or shown
+Todo may have DueDates and can be marked as completed
+Todo can be sorted based on DueDate
+Todo can be sorted by priority

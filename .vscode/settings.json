@@ -1,3 +1,6 @@
 {
-  "dotnet.defaultSolution": "csharp/todo.sln"
+  "dotnet.defaultSolution": "csharp/todo.sln",
+  "cSpell.words": [
+    "Todos"
+  ]
 }

@@ -8,13 +8,16 @@ public class DeleteUserHandler : IHandler<DeleteUserRequest, DeleteUserResponse>
 {
     public readonly ILogger<DeleteUserHandler> _logger;
     public readonly IRepository<UserEntity> _userRepository;
+    public readonly ICleanupService _cleanupService;
 
     public DeleteUserHandler(
         ILogger<DeleteUserHandler> logger,
-        IRepository<UserEntity> userRepository)
+        IRepository<UserEntity> userRepository,
+        ICleanupService cleanupService)
     {
         _logger = logger;
         _userRepository = userRepository;
+        _cleanupService = cleanupService;
     }
 
     public async Task<DeleteUserResponse> Handle(DeleteUserRequest request)
@@ -26,6 +29,14 @@ public class DeleteUserHandler : IHandler<DeleteUserRequest, DeleteUserResponse>
             if (user == null)
             {
                 response.ErrorReason = UserReasons.UserNotFound;
+                return response;
+            }
+
+            bool isReferencesCleaned = await _cleanupService.CleanupUserReferencesAsync(user.RowKey);
+
+            if (!isReferencesCleaned)
+            {
+                response.ErrorReason = UserReasons.UserReferencesNotFullyCleaned;
                 return response;
             }
 

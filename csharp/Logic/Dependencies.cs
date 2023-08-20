@@ -5,6 +5,7 @@ using Todo.Logic.ApiV1.Users;
 using Todo.Logic.DomainObjects.Entities;
 using Todo.Logic.DomainObjects.Repositories;
 using Todo.Logic.Interfaces;
+using Todo.Logic.Services;
 
 namespace Todo.Logic;
 
@@ -23,6 +24,12 @@ public static class Dependencies
         services.AddScoped<IHandler<DeleteTodoRequest, DeleteTodoResponse>, DeleteTodoHandler>();
         services.AddScoped<IHandler<UpdateTodoRequest, UpdateTodoResponse>, UpdateTodoHandler>();
 
+        return services;
+    }
+
+    public static IServiceCollection AddServices(this IServiceCollection services)
+    {
+        services.AddScoped<ICleanupService, CleanupService>();
         return services;
     }
 

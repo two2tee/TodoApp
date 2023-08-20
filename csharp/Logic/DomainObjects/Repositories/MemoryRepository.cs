@@ -50,9 +50,16 @@ public class MemoryRepository<TEntity> : IRepository<TEntity> where TEntity : Ba
 
     public async Task DeleteAsync(TEntity entity)
     {
-        if (_entities.ContainsKey(entity.PartitionKey))
+        if (!_entities.ContainsKey(entity.PartitionKey) || !_entities[entity.PartitionKey].ContainsKey(entity.RowKey))
         {
-            _entities[entity.PartitionKey].Remove(entity.RowKey);
+            return;
+        }
+
+        _entities[entity.PartitionKey].Remove(entity.RowKey);
+
+        if (!_entities[entity.PartitionKey].Any())
+        {
+            _entities.Remove(entity.PartitionKey);
         }
     }
 

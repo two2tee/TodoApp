@@ -1,13 +1,7 @@
 namespace Todo.Logic.ApiV1.Users;
 
-public class GetUsersResponse
+public class GetUsersResponse : ApiV1BaseResponse
 {
     [JsonPropertyName("users")]
     public IList<UserDto> Users { get; set; } = new List<UserDto>();
-
-    [JsonPropertyName("isSuccess")]
-    public bool IsSuccess { get; set; }
-
-    [JsonPropertyName("errorMessage")]
-    public string ErrorMessage { get; set; }
 }

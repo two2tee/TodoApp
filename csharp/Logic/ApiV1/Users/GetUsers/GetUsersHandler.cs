@@ -1,3 +1,4 @@
+using Todo.Logic.DomainObjects.Constants;
 using Todo.Logic.DomainObjects.Entities;
 using Todo.Logic.Interfaces;
 
@@ -34,7 +35,8 @@ public class GetUsersHandler : IHandler<GetUsersRequest, GetUsersResponse>
             return new GetUsersResponse
             {
                 IsSuccess = false,
-                ErrorMessage = ex.Message
+                ErrorMessage = ex.Message,
+                ErrorReason = GeneralReasons.InternalError
             };
         }
     }

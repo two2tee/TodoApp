@@ -39,7 +39,7 @@ public class UsersController : Controller
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteUser([FromBody] DeleteUserRequest request)
+    public async Task<IActionResult> DeleteUser([FromQuery] DeleteUserRequest request)
     {
         DeleteUserResponse response = await _deleteUserHandler.Handle(request);
         return Ok(response);

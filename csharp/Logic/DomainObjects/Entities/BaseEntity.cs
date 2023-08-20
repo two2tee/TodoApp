@@ -1,11 +1,19 @@
 namespace Todo.Logic.DomainObjects.Entities;
 
-public abstract class BaseEntity
+public class BaseEntity
 {
     public string PartitionKey { get; set; }
     public string RowKey { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+
+    public BaseEntity()
+    {
+        PartitionKey = "";
+        RowKey = Guid.NewGuid().ToString();
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+    }
 
     public BaseEntity(string partitionKey = null, string rowKey = null)
     {

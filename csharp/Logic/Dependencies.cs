@@ -35,7 +35,7 @@ public static class Dependencies
 
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        services.AddSingleton<IRepository<UserEntity>, MemoryRepository<UserEntity>>();
+        services.AddSingleton<IRepository<UserEntity>, MongoDbRepository<UserEntity>>();
         services.AddSingleton<IRepository<TodoEntity>, MemoryRepository<TodoEntity>>();
         return services;
     }

@@ -805,3 +805,5 @@ sketch
 # .pnp.*
 
 # End of https://www.toptal.com/developers/gitignore/api/csharp,dotnetcore,visualstudiocode,java,yarn,node,python,react,go
+
+appsettings.Development.json

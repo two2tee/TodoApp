@@ -46,6 +46,8 @@ public class GetTodosHandler : IHandler<GetTodosRequest, GetTodosResponse>
         var todoEntities = await _todoRepository.GetAsync(partitionKey: request.UserId);
         return todoEntities.Select(todoEntity => new TodoDto
         {
+            TodoId = todoEntity.TodoId,
+            UserId = todoEntity.UserId,
             Title = todoEntity.Title,
             Description = todoEntity.Description,
             CompletedAt = todoEntity.CompletedAt,

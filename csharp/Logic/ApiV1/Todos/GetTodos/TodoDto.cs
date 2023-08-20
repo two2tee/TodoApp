@@ -3,6 +3,9 @@ namespace Todo.Logic.ApiV1.Todos;
 public class TodoDto
 {
     [JsonPropertyName("todoId")]
+    public string TodoId { get; set; }
+
+    [JsonPropertyName("userId")]
     public string UserId { get; set; }
 
     [JsonPropertyName("title")]

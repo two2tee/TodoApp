@@ -5,7 +5,11 @@ public class TodoEntity : BaseEntity
     public TodoEntity(string userId) : base()
     {
         PartitionKey = userId;
+        UserId = PartitionKey;
+        TodoId = RowKey;
     }
+
+    public string TodoId { get; set; }
 
     public string UserId { get; set; }
 

@@ -10,17 +10,20 @@ public class TodosController : Controller
     private readonly IHandler<CreateTodoRequest, CreateTodoResponse> _createTodoHandler;
     private readonly IHandler<GetTodosRequest, GetTodosResponse> _getTodosHandler;
     private readonly IHandler<DeleteTodoRequest, DeleteTodoResponse> _deleteTodoHandler;
+    private readonly IHandler<UpdateTodoRequest, UpdateTodoResponse> _updateTodoHandler;
 
     public TodosController(
         ILogger<TodosController> logger,
         IHandler<CreateTodoRequest, CreateTodoResponse> createTodoHandler,
         IHandler<GetTodosRequest, GetTodosResponse> getTodosHandler,
-        IHandler<DeleteTodoRequest, DeleteTodoResponse> deleteTodoHandler)
+        IHandler<DeleteTodoRequest, DeleteTodoResponse> deleteTodoHandler,
+        IHandler<UpdateTodoRequest, UpdateTodoResponse> updateTodoHandler)
     {
         _logger = logger;
         _createTodoHandler = createTodoHandler;
         _getTodosHandler = getTodosHandler;
         _deleteTodoHandler = deleteTodoHandler;
+        _updateTodoHandler = updateTodoHandler;
     }
 
     [HttpPost]
@@ -45,9 +48,9 @@ public class TodosController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateTodo([FromBody] DeleteTodoRequest request)
+    public async Task<IActionResult> UpdateTodo([FromBody] UpdateTodoRequest request)
     {
-        DeleteTodoResponse response = await _deleteTodoHandler.Handle(request);
+        UpdateTodoResponse response = await _updateTodoHandler.Handle(request);
         return Ok(response);
     }
 }

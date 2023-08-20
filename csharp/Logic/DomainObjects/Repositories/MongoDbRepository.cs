@@ -49,12 +49,22 @@ public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : B
 
     public async Task AddOrUpdateAsync(TEntity entity)
     {
-        throw new NotImplementedException();
+        var existingEntity = GetAsync(entity.PartitionKey, entity.RowKey);
+        if (existingEntity == null)
+        {
+            await AddAsync(entity);
+            return;
+        }
+        await UpdateAsync(entity);
     }
 
     public async Task DeleteAsync(TEntity entity)
     {
-        throw new NotImplementedException();
+        var collection = GetCollection();
+        var filter = Builders<BsonDocument>.Filter.Eq("PartitionKey", entity.PartitionKey) &
+                     Builders<BsonDocument>.Filter.Eq("RowKey", entity.RowKey);
+
+        await collection.DeleteOneAsync(filter);
     }
 
     public async Task<TEntity> GetAsync(string partitionKey, string rowKey)
@@ -71,22 +81,39 @@ public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : B
 
     public async Task<IEnumerable<TEntity>> GetAsync(string partitionKey)
     {
-        throw new NotImplementedException();
+        var collection = GetCollection();
+        var filter = Builders<BsonDocument>.Filter.Eq("PartitionKey", partitionKey);
+
+        var result = (await collection.FindAsync(filter))
+                                      .ToList()
+                                      .Select(bson => ToEntity(bson));
+        return result;
     }
 
     public async Task<IEnumerable<TEntity>> GetByQueryAsync(Func<TEntity, bool> predicate, string partitionKey)
     {
-        throw new NotImplementedException();
+        var collection = GetCollection();
+        var filter = Builders<BsonDocument>.Filter.Eq("PartitionKey", partitionKey);
+        var result = (await collection.FindAsync(filter))
+                                      .ToList()
+                                      .Select(bson => ToEntity(bson))
+                                      .Where(predicate);
+        return result;
     }
 
     public async Task<TEntity> GetFirstByQueryAsync(Func<TEntity, bool> predicate, string partitionKey)
     {
-        throw new NotImplementedException();
+        var result = (await GetByQueryAsync(predicate, partitionKey)).FirstOrDefault();
+        return result;
     }
 
     public async Task UpdateAsync(TEntity entity)
     {
-        throw new NotImplementedException();
+        var collection = GetCollection();
+        collection.UpdateOne(
+            Builders<BsonDocument>.Filter.Eq("PartitionKey", entity.PartitionKey) &
+            Builders<BsonDocument>.Filter.Eq("RowKey", entity.RowKey),
+            ToBsonDocument(entity));
     }
 
     private IMongoCollection<BsonDocument> GetCollection()
@@ -97,10 +124,10 @@ public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : B
     private BsonDocument ToBsonDocument(TEntity entity)
     {
         var document = new BsonDocument();
-        var properties = GetType().GetProperties(BindingFlags.Public);
+        var properties = entity.GetType().GetProperties();
         foreach (var property in properties)
         {
-            var value = property.GetValue(this);
+            var value = property.GetValue(entity);
             document.Add(property.Name, BsonValue.Create(value));
         }
         return document;
@@ -109,12 +136,12 @@ public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : B
     private TEntity ToEntity(BsonDocument document)
     {
         var entity = new TEntity();
-        var properties = typeof(TEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        var properties = typeof(TEntity).GetProperties();
         foreach (var property in properties)
         {
             var attribute = property.GetCustomAttribute<BsonElementAttribute>();
             var name = attribute?.ElementName ?? property.Name;
-            if (document.Equals(name))
+            if (document.Contains(name))
             {
                 var value = document[name];
                 if (!value.IsBsonNull)

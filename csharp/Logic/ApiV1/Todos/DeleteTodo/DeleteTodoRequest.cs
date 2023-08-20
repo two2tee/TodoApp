@@ -5,11 +5,11 @@ namespace Todo.Logic.ApiV1.Todos;
 
 public class DeleteTodoRequest
 {
-    [JsonPropertyName("userId")]
+    [FromQuery(Name = "userId")]
     [Required]
     public string UserId { get; set; }
 
-    [JsonPropertyName("todoId")]
+    [FromQuery(Name = "todoId")]
     [Required]
     public string TodoId { get; set; }
 }

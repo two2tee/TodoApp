@@ -1,10 +1,5 @@
 namespace Todo.Logic.ApiV1.Users;
 
-public class CreateUserResponse
+public class CreateUserResponse: ApiV1BaseResponse
 {
-    [JsonPropertyName("isSuccess")]
-    public bool IsSuccess { get; set; }
-
-    [JsonPropertyName("errorMessage")]
-    public string ErrorMessage { get; set; }
 }

@@ -1,3 +1,4 @@
+using Todo.Logic.DomainObjects.Constants;
 using Todo.Logic.DomainObjects.Entities;
 using Todo.Logic.Interfaces;
 
@@ -18,34 +19,30 @@ public class CreateUserHandler : IHandler<CreateUserRequest, CreateUserResponse>
 
     public async Task<CreateUserResponse> Handle(CreateUserRequest request)
     {
-        var user = await _userRepository.GetFirstByQueryAsync(user => user.Email == request.Email, "");
-        if(user != null)
-        {
-            return new CreateUserResponse
-            {
-                IsSuccess = false,
-                ErrorMessage = "User already exists"
-            };
-        }
+        var response = new CreateUserResponse();
+
 
         try
         {
+            var user = await _userRepository.GetFirstByQueryAsync(user => user.Email == request.Email, "");
+            if (user != null)
+            {
+                response.ErrorReason = UserReasons.UserAlreadyCreated;
+                return response;
+            }
+
             await CreateUser(request);
+
+            response.IsSuccess = true;
+            return response;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating user");
-            return new CreateUserResponse
-            {
-                IsSuccess = false,
-                ErrorMessage = ex.Message
-            };
+            response.ErrorReason = GeneralReasons.InternalError;
+            response.ErrorMessage = ex.Message;
+            return response;
         }
-
-        return new CreateUserResponse
-        {
-            IsSuccess = true
-        };
     }
 
 
